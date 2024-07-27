@@ -8,6 +8,14 @@ router.post('/create-tender', async (req, res) => {
   res.status(201).send(tender);
 });
 
+router.get('/:id', async (req, res) => {
+  const tender = await Tender.findById(req.params.id);
+  if (!tender) {
+    return res.status(404).send({ message: 'Tender not found' });
+  }
+  res.send(tender);
+});
+
 
 
 

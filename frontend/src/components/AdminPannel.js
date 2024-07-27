@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Alert, Form, Button, Container } from 'react-bootstrap';
 import TenderList from './TenderList';
 import BidTable from './BidTable';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AdminPanel = () => {
   const [tenders, setTenders] = useState([]);
@@ -14,11 +16,16 @@ const AdminPanel = () => {
   });
   const [errors, setErrors] = useState({});
   const [selectedTender, setSelectedTender] = useState(null);
+  const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {
     const fetchTenders = async () => {
-      const response = await axios.get('http://localhost:3001/api/tenders');
-      setTenders(response.data);
+      try {
+        const response = await axios.get('http://localhost:3001/api/tenders');
+        setTenders(response?.data);
+      } catch (error) {
+        console.error('Error fetching tenders:', error);
+      }
     };
     fetchTenders();
   }, []);
@@ -50,7 +57,7 @@ const AdminPanel = () => {
 
     try {
       const response = await axios.post('http://localhost:3001/api/tenders/create-tender', newTender);
-      setTenders([...tenders, response.data]);
+      setTenders([...tenders, response?.data]);
       setNewTender({
         name: '',
         description: '',
@@ -59,91 +66,91 @@ const AdminPanel = () => {
         bufferTime: '',
       });
       setErrors({});
+      setAlertMessage('Tender created successfully!');
+      setTimeout(() => setAlertMessage(''), 5000);
     } catch (error) {
       console.error('Error creating tender:', error);
+      setAlertMessage('Error creating tender. Please try again.');
+      setTimeout(() => setAlertMessage(''), 5000); 
     }
   };
 
   return (
-    <div className="container">
-      <h2 className="my-4">Admin Panel</h2>
-      <form onSubmit={handleSubmit} className="mb-4">
-        <div className="form-group">
-          <label htmlFor="name" className="form-label">Tender Name</label>
-          <input
+    <Container className="my-4">
+      <h2>Admin Panel</h2>
+      {alertMessage && <Alert variant="success">{alertMessage}</Alert>}
+      <Form onSubmit={handleSubmit} className="mb-4">
+        <Form.Group controlId="name">
+          <Form.Label>Tender Name</Form.Label>
+          <Form.Control
             type="text"
-            id="name"
             name="name"
             placeholder="Enter Tender Name"
             value={newTender.name}
             onChange={handleChange}
-            className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+            isInvalid={!!errors.name}
           />
-          {errors.name && <div className="invalid-feedback">{errors.name}</div>}
-        </div>
+          <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+        </Form.Group>
 
-        <div className="form-group">
-          <label htmlFor="description" className="form-label">Tender Description</label>
-          <input
+        <Form.Group controlId="description">
+          <Form.Label>Tender Description</Form.Label>
+          <Form.Control
             type="text"
-            id="description"
             name="description"
             placeholder="Enter Tender Description"
             value={newTender.description}
             onChange={handleChange}
-            className={`form-control ${errors.description ? 'is-invalid' : ''}`}
+            isInvalid={!!errors.description}
           />
-          {errors.description && <div className="invalid-feedback">{errors.description}</div>}
-        </div>
+          <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
+        </Form.Group>
 
-        <div className="form-group">
-          <label htmlFor="startTime" className="form-label">Start Time</label>
-          <input
+        <Form.Group controlId="startTime">
+          <Form.Label>Start Time</Form.Label>
+          <Form.Control
             type="datetime-local"
-            id="startTime"
             name="startTime"
             value={newTender.startTime}
             onChange={handleChange}
-            className={`form-control ${errors.startTime ? 'is-invalid' : ''}`}
+            isInvalid={!!errors.startTime}
           />
-          {errors.startTime && <div className="invalid-feedback">{errors.startTime}</div>}
-        </div>
+          <Form.Control.Feedback type="invalid">{errors.startTime}</Form.Control.Feedback>
+        </Form.Group>
 
-        <div className="form-group">
-          <label htmlFor="endTime" className="form-label">End Time</label>
-          <input
+        <Form.Group controlId="endTime">
+          <Form.Label>End Time</Form.Label>
+          <Form.Control
             type="datetime-local"
-            id="endTime"
             name="endTime"
             value={newTender.endTime}
             onChange={handleChange}
-            className={`form-control ${errors.endTime ? 'is-invalid' : ''}`}
+            isInvalid={!!errors.endTime}
           />
-          {errors.endTime && <div className="invalid-feedback">{errors.endTime}</div>}
-        </div>
+          <Form.Control.Feedback type="invalid">{errors.endTime}</Form.Control.Feedback>
+        </Form.Group>
 
-        <div className="form-group ">
-          <label htmlFor="bufferTime" className="form-label">Buffer Time (minutes)</label>
-          <input
+        <Form.Group controlId="bufferTime">
+          <Form.Label>Buffer Time (minutes)</Form.Label>
+          <Form.Control
             type="number"
-            id="bufferTime"
             name="bufferTime"
             placeholder="Enter Buffer Time"
             value={newTender.bufferTime}
             onChange={handleChange}
-            className={`form-control ${errors.bufferTime ? 'is-invalid' : ''}`}
+            isInvalid={!!errors.bufferTime}
           />
-          {errors.bufferTime && <div className="invalid-feedback">{errors.bufferTime}</div>}
-        </div>
+          <Form.Control.Feedback type="invalid">{errors.bufferTime}</Form.Control.Feedback>
+        </Form.Group>
 
         <div className="d-flex justify-content-center mt-3">
-          <button type="submit" className="btn btn-primary">Create Tender</button>
+          <Button type="submit" variant="primary">Create Tender</Button>
         </div>
-      </form>
+      </Form>
 
       <TenderList tenders={tenders} onTenderSelect={handleTenderSelect} />
       {selectedTender && <BidTable tenderId={selectedTender} />}
-    </div>
+    </Container>
   );
 };
 

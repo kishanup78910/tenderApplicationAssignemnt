@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
 
 const BidForm = ({ tenderId, onBidSubmit, disabled }) => {
   const [bid, setBid] = useState({
     companyName: '',
     bidCost: '',
   });
+  
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -34,37 +36,37 @@ const BidForm = ({ tenderId, onBidSubmit, disabled }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-3">
-      <div className="form-group">
-        <input
+    <Form onSubmit={handleSubmit} className="mt-3">
+      <Form.Group controlId="companyName">
+        <Form.Control
           type="text"
           name="companyName"
           placeholder="Company Name"
           value={bid.companyName}
           onChange={handleChange}
-          className={`form-control ${errors.companyName ? 'is-invalid' : ''}`}
+          isInvalid={!!errors.companyName}
           disabled={disabled}
         />
-        {errors.companyName && <div className="invalid-feedback">{errors.companyName}</div>}
-      </div>
-      <div className="form-group py-3">
-        <input
+        <Form.Control.Feedback type="invalid">{errors.companyName}</Form.Control.Feedback>
+      </Form.Group>
+      <Form.Group controlId="bidCost" className="py-3">
+        <Form.Control
           type="number"
           name="bidCost"
           placeholder="Bid Cost"
           value={bid.bidCost}
           onChange={handleChange}
-          className={`form-control ${errors.bidCost ? 'is-invalid' : ''}`}
+          isInvalid={!!errors.bidCost}
           disabled={disabled}
         />
-        {errors.bidCost && <div className="invalid-feedback">{errors.bidCost}</div>}
-      </div>
+        <Form.Control.Feedback type="invalid">{errors.bidCost}</Form.Control.Feedback>
+      </Form.Group>
       <div className="d-flex justify-content-center mt-3 mb-5">
-        <button type="submit" className="btn btn-success" disabled={disabled}>
+        <Button type="submit" variant="success" disabled={disabled}>
           Submit Bid
-        </button>
+        </Button>
       </div>
-    </form>
+    </Form>
   );
 };
 
