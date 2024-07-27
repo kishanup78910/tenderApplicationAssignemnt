@@ -21,7 +21,7 @@ const AdminPanel = () => {
   useEffect(() => {
     const fetchTenders = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/tenders');
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/tenders`);
         setTenders(response?.data);
       } catch (error) {
         console.error('Error fetching tenders:', error);
@@ -56,7 +56,7 @@ const AdminPanel = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await axios.post('http://localhost:3001/api/tenders/create-tender', newTender);
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/tenders/create-tender`, newTender);
       setTenders([...tenders, response?.data]);
       setNewTender({
         name: '',

@@ -10,7 +10,7 @@ const UserView = () => {
 
   useEffect(() => {
     const fetchTenders = async () => {
-      const response = await axios.get('http://localhost:3001/api/tenders');
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/tenders`);
       setTenders(response?.data);
     };
     fetchTenders();
@@ -18,7 +18,7 @@ const UserView = () => {
 
   const handleBidSubmit = async (tenderId, bid) => {
     try {
-      const response = await axios.post('http://localhost:3001/api/bids/submit-bid', { tenderId, ...bid });
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/bids/submit-bid`, { tenderId, ...bid });
       setBids([...bids, response?.data]);
       setAlertMessage('Bid submitted successfully!');
       setTimeout(() => setAlertMessage(''), 3000); // Clear alert after 3 seconds

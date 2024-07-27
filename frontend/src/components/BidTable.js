@@ -6,7 +6,7 @@ const BidTable = ({ tenderId }) => {
 
   useEffect(() => {
     const fetchBids = async () => {
-      const response = await axios.get(`http://localhost:3001/api/bids/tender/${tenderId}`);
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/bids/tender/${tenderId}`);
       setBids(response?.data);
       console.log(response.data);
     };
