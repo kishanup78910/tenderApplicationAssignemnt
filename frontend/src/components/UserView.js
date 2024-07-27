@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import BidForm from './BidForm';
-import { Container, Alert, ListGroup, Badge } from 'react-bootstrap';
+import { Container, Alert, ListGroup, Badge, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const UserView = () => {
   const [tenders, setTenders] = useState([]);
@@ -21,7 +22,7 @@ const UserView = () => {
       const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/api/bids/submit-bid`, { tenderId, ...bid });
       setBids([...bids, response?.data]);
       setAlertMessage('Bid submitted successfully!');
-      setTimeout(() => setAlertMessage(''), 3000); // Clear alert after 3 seconds
+      setTimeout(() => setAlertMessage(''), 3000);
     } catch (error) {
       console.error('Error submitting bid:', error);
     }
@@ -32,14 +33,24 @@ const UserView = () => {
     return new Date(endTime) > now ? 'Active' : 'Expired';
   };
 
-  const sortedTenders = [...tenders].sort((a, b) => {
-    return getStatus(b.endTime) === 'Active' ? 1 : -1;
-  });
+  const formatDate = (date) => new Date(date).toLocaleString();
+
+  const sortedTenders = [...tenders].sort((a, b) => new Date(a.endTime) - new Date(b.endTime));
 
   return (
     <Container>
-      <h2 className="my-4">Available Tenders</h2>
-      {alertMessage && <Alert variant="success">{alertMessage}</Alert>}
+      <div className="d-flex justify-content-between align-items-center my-4">
+        <div>
+          <h2>Available Tenders</h2>
+          {alertMessage && <Alert variant="success">{alertMessage}</Alert>}
+        </div>
+        <div>
+          <Link to="/admin">
+            <Button variant="primary">Go to Admin Panel</Button>
+          </Link>
+        </div>
+      </div>
+    
       <ListGroup>
         {sortedTenders.map((tender) => (
           <ListGroup.Item key={tender._id}>
@@ -50,7 +61,7 @@ const UserView = () => {
                 <Badge bg={getStatus(tender.endTime) === 'Active' ? 'success' : 'danger'}>
                   {getStatus(tender.endTime)}
                 </Badge>
-                <p>Expiration Time: {new Date(tender.endTime).toLocaleString()}</p>
+                <p>Expiration Time: {formatDate(tender.endTime)}</p>
               </div>
               <BidForm
                 tenderId={tender._id}

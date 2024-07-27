@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Alert, Form, Button, Container } from 'react-bootstrap';
 import TenderList from './TenderList';
 import BidTable from './BidTable';
+import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AdminPanel = () => {
@@ -77,8 +78,20 @@ const AdminPanel = () => {
 
   return (
     <Container className="my-4">
-      <h2>Admin Panel</h2>
-      {alertMessage && <Alert variant="success">{alertMessage}</Alert>}
+        <div className="d-flex justify-content-between align-items-center my-4">
+        <div>
+        <h2>Admin Panel</h2>
+        {alertMessage && <Alert variant="success">{alertMessage}</Alert>}   
+             </div>
+        <div>
+        <Link to="/">
+        <Button variant="primary" className="mb-4">Go to User View</Button>
+      </Link>
+        </div>
+      </div>
+      
+     
+     
       <Form onSubmit={handleSubmit} className="mb-4">
         <Form.Group controlId="name">
           <Form.Label>Tender Name</Form.Label>
